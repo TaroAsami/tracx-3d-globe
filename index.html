@@ -138,34 +138,33 @@
   </style>
 </head>
 <body>
-  <!-- Google Sitesの会社概要などに設置する起動ボタン -->
+  <!-- 会社概要に設置する起動ボタン -->
   <button class="launch" id="open">
     <span class="pin">🌎</span>
-    <span>3D地球儀を見る</span>
+    <span>Check on a globe.</span>
   </button>
 
   <div id="overlay" role="dialog" aria-modal="true" aria-label="3D地球儀">
     <section id="panel">
       <header id="toolbar">
         <div>
-          <strong>TracX Logis | Global Logistics</strong>
+          <strong>TXFC</strong>
           <small>Interactive 3D Earth</small>
         </div>
         <button id="close" type="button">✕ 閉じる</button>
       </header>
       <div id="globe">
-        <div id="status">地球儀を読み込み中…</div>
+        <div id="status">読み込み中…</div>
         <div id="info">
-          <strong>SmartFulfillment｜東京センター</strong>
+          <strong>SmartFulfillment - TracX Logis JP Tokyo</strong>
           <span>千葉県船橋市西浦3丁目4-2<br>
           緯度 35.689545 / 経度 139.961836</span>
         </div>
-      </div>
-      <div class="hint">ドラッグ：回転　｜　スクロール：ズーム　｜　ダブルクリック：拡大</div>
+      </div>     
     </section>
   </div>
 
-  <!-- Three.js と Globe.gl はCDNから読み込みます（APIキー不要） -->
+  <!-- Three.js と Globe.gl はCDNから読み込み -->
 <script src="https://cdn.jsdelivr.net/npm/globe.gl@2.46.2/dist/globe.gl.min.js"></script>
   <script>
     const overlay = document.getElementById('overlay');
@@ -176,9 +175,9 @@
     let world = null;
     let initialized = false;
 
-    // 座標はご指定のGoogle Maps埋め込みURLから設定
+    // 座標はGoogle Maps埋め込みURLから設定
     const tokyoCenter = {
-      name: 'SmartFulfillment｜東京センター',
+      name: 'SmartFulfillment - TracX Logis JP Tokyo',
       lat: 35.689544529519246,
       lng: 139.96183627462105,
       altitude: 0.12
@@ -236,7 +235,7 @@
         // 起動時に日本付近を見やすい角度に設定
         world.pointOfView({ lat: tokyoCenter.lat, lng: tokyoCenter.lng, altitude: 2.2 }, 1000);
 
-        status.textContent = 'ドラッグして地球儀を回転できます';
+        status.textContent = 'ドラッグして地球儀を回転';
         initialized = true;
 
         window.addEventListener('resize', () => {
