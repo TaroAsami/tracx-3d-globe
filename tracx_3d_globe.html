@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TracX Logis | 3D地球儀</title>
+  <style>
+    :root {
+      --navy: #071426;
+      --blue: #1688d4;
+      --text: #172033;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, "Noto Sans JP", sans-serif;
+      color: var(--text);
+      background: #fff;
+    }
+    .launch {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border: 1px solid #cbd5e1;
+      border-radius: 7px;
+      background: #fff;
+      color: #172033;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s, border-color .2s;
+    }
+    .launch:hover { background: #f1f7fc; border-color: #1688d4; }
+    .launch .pin { font-size: 18px; }
+    #overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      padding: 18px;
+      background: rgba(2, 8, 23, .82);
+      align-items: center;
+      justify-content: center;
+    }
+    #overlay.open { display: flex; }
+    #panel {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      width: min(1180px, 100%);
+      height: min(820px, 94vh);
+      overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, .35);
+      border-radius: 14px;
+      background: var(--navy);
+      box-shadow: 0 24px 80px rgba(0,0,0,.4);
+    }
+    #toolbar {
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 16px;
+      color: #fff;
+      background: #0b1b31;
+      border-bottom: 1px solid rgba(148,163,184,.22);
+    }
+    #toolbar strong { font-size: 15px; }
+    #toolbar small {
+      display: block;
+      margin-top: 3px;
+      color: #a9bdd3;
+      font-size: 11px;
+      font-weight: 400;
+    }
+    #close {
+      flex: 0 0 auto;
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: #fff;
+      background: rgba(255,255,255,.08);
+      cursor: pointer;
+    }
+    #close:hover { background: rgba(255,255,255,.17); }
+    #globe {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+      background: radial-gradient(ellipse at center, #10294a 0%, #06101f 68%, #020712 100%);
+    }
+    #info {
+      position: absolute;
+      left: 16px;
+      bottom: 16px;
+      max-width: min(340px, calc(100% - 32px));
+      padding: 12px 14px;
+      border: 1px solid rgba(148,163,184,.25);
+      border-radius: 9px;
+      color: #e8f3ff;
+      background: rgba(5, 17, 34, .82);
+      backdrop-filter: blur(8px);
+      pointer-events: none;
+    }
+    #info strong { display: block; margin-bottom: 4px; font-size: 13px; }
+    #info span { color: #b8c9dc; font-size: 11px; line-height: 1.6; }
+    #status {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #d8e9fa;
+      background: rgba(5,17,34,.72);
+      border: 1px solid rgba(148,163,184,.2);
+      border-radius: 20px;
+      padding: 7px 12px;
+      font-size: 11px;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .hint {
+      padding: 9px 14px;
+      color: #9fb3c9;
+      background: #08172b;
+      font-size: 11px;
+      text-align: center;
+    }
+    @media (max-width: 600px) {
+      #overlay { padding: 0; }
+      #panel { width: 100%; height: 100%; border-radius: 0; }
+      #toolbar { padding: 10px 12px; }
+      #toolbar strong { font-size: 13px; }
+      #info { left: 10px; bottom: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Google Sitesの会社概要などに設置する起動ボタン -->
+  <button class="launch" id="open">
+    <span class="pin">🌎</span>
+    <span>3D地球儀を見る</span>
+  </button>
+
+  <div id="overlay" role="dialog" aria-modal="true" aria-label="3D地球儀">
+    <section id="panel">
+      <header id="toolbar">
+        <div>
+          <strong>TracX Logis | Global Logistics</strong>
+          <small>Interactive 3D Earth</small>
+        </div>
+        <button id="close" type="button">✕ 閉じる</button>
+      </header>
+      <div id="globe">
+        <div id="status">地球儀を読み込み中…</div>
+        <div id="info">
+          <strong>SmartFulfillment｜東京センター</strong>
+          <span>千葉県船橋市西浦3丁目4-2<br>
+          緯度 35.689545 / 経度 139.961836</span>
+        </div>
+      </div>
+      <div class="hint">ドラッグ：回転　｜　スクロール：ズーム　｜　ダブルクリック：拡大</div>
+    </section>
+  </div>
+
+  <!-- Three.js と Globe.gl はCDNから読み込みます（APIキー不要） -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/globe.gl"></script>
+  <script>
+    const overlay = document.getElementById('overlay');
+    const openButton = document.getElementById('open');
+    const closeButton = document.getElementById('close');
+    const globeContainer = document.getElementById('globe');
+    const status = document.getElementById('status');
+    let world = null;
+    let initialized = false;
+
+    // 座標はご指定のGoogle Maps埋め込みURLから設定
+    const tokyoCenter = {
+      name: 'SmartFulfillment｜東京センター',
+      lat: 35.689544529519246,
+      lng: 139.96183627462105,
+      altitude: 0.12
+    };
+
+    function closeGlobe() {
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function initGlobe() {
+      if (initialized) {
+        if (world) world.width(globeContainer.clientWidth).height(globeContainer.clientHeight);
+        return;
+      }
+      if (typeof Globe !== 'function') {
+        status.textContent = '地球儀ライブラリを読み込めません。ネットワーク設定をご確認ください。';
+        return;
+      }
+
+      try {
+        world = Globe()(globeContainer)
+          // 地球の陸地・海洋・国境等を含む公開テクスチャ画像
+          .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+          .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+          .backgroundColor('rgba(0,0,0,0)')
+          .showAtmosphere(true)
+          .atmosphereColor('#4aa8ff')
+          .atmosphereAltitude(0.18)
+          .pointsData([tokyoCenter])
+          .pointLat('lat')
+          .pointLng('lng')
+          .pointAltitude('altitude')
+          .pointRadius(0.42)
+          .pointColor(() => '#ff5b4d')
+          .pointLabel('name')
+          .labelsData([tokyoCenter])
+          .labelLat('lat')
+          .labelLng('lng')
+          .labelText('name')
+          .labelSize(0.7)
+          .labelDotRadius(0.25)
+          .labelColor(() => '#ffffff')
+          .labelResolution(2);
+
+        world.width(globeContainer.clientWidth)
+             .height(globeContainer.clientHeight);
+
+        const controls = world.controls();
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.35;
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.08;
+
+        // 起動時に日本付近を見やすい角度に設定
+        world.pointOfView({ lat: tokyoCenter.lat, lng: tokyoCenter.lng, altitude: 2.2 }, 1000);
+
+        status.textContent = 'ドラッグして地球儀を回転できます';
+        initialized = true;
+
+        window.addEventListener('resize', () => {
+          if (world && overlay.classList.contains('open')) {
+            world.width(globeContainer.clientWidth)
+                 .height(globeContainer.clientHeight);
+          }
+        });
+      } catch (e) {
+        console.error(e);
+        status.textContent = '地球儀の初期化に失敗しました。ブラウザのConsoleをご確認ください。';
+      }
+    }
+
+    openButton.addEventListener('click', () => {
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      // モーダルが表示された後にサイズを取得して描画
+      requestAnimationFrame(() => setTimeout(initGlobe, 50));
+    });
+
+    closeButton.addEventListener('click', closeGlobe);
+    overlay.addEventListener('click', event => {
+      if (event.target === overlay) closeGlobe();
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closeGlobe();
+    });
+  </script>
+</body>
+</html>
