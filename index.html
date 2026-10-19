@@ -29,28 +29,27 @@ body {
   justify-content: center;
   align-items: center;
 }
-
 button {
   font: inherit;
 }
-    
+
 .launch {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* 左寄せ */
   gap: 10px;
   padding: 12px 18px;
   border: 1px solid transparent;
   border-radius: 8px;
   background: transparent;
   color: #ffffff;
-font-family: "Times New Roman", serif;
-font-size: 12px;
-font-weight: 600;
+  font-family: "Times New Roman", serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left; /* 文字を左寄せ */
   cursor: pointer;
   transition: background .2s ease, box-shadow .2s ease;
 }
-
 .launch:hover,
 .launch:focus-visible {
   background: rgba(53, 217, 255, .09);
