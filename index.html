@@ -18,6 +18,8 @@
 
     html, body {
       margin: 0;
+      width: 100%;
+      min-width: 0;
       min-height: 100%;
       font-family: Arial, "Noto Sans JP", sans-serif;
       background: transparent;
@@ -26,45 +28,63 @@
     body {
       color: var(--text);
       display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
+      justify-content: flex-start;
+      align-items: flex-start;
     }
 
     button { font: inherit; }
 
-    /* 起動ボタン：住所全文を置かず、狭い埋め込み枠でも見切れにくくする */
+    /* 住所全文をリンク風に表示。狭い枠では文頭から自然に折り返す */
     .launch {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 10px;
+      width: 100%;
       max-width: 100%;
-      padding: 12px 18px;
+      min-width: 0;
+      padding: 8px 10px;
+      margin: 0;
       border: 1px solid transparent;
-      border-radius: 8px;
+      border-radius: 6px;
       background: transparent;
       color: #ffffff;
-      font-family: "Times New Roman", serif;
-      font-size: 12px;
-      font-weight: 600;
+      font-family: Arial, "Noto Sans JP", sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.65;
       text-align: left;
       cursor: pointer;
+      white-space: normal;
       overflow-wrap: anywhere;
+      word-break: normal;
       transition: background .2s ease, box-shadow .2s ease;
     }
 
     .launch:hover,
     .launch:focus-visible {
-      background: rgba(53, 217, 255, .09);
-      box-shadow: 0 0 18px rgba(53, 217, 255, .12);
+      background: rgba(53, 217, 255, .07);
+      box-shadow: 0 0 12px rgba(53, 217, 255, .10);
       outline: none;
+      text-decoration: underline;
+      text-decoration-color: rgba(143, 234, 255, .8);
+      text-underline-offset: 3px;
     }
 
     .launch .pin {
-      font-size: 19px;
-      line-height: 1;
-      flex-shrink: 0;
+      flex: 0 0 auto;
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    .launch .address-text {
+      display: block;
+      flex: 1 1 auto;
+      min-width: 0;
+      max-width: 100%;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: normal;
     }
 
     #overlay {
@@ -101,7 +121,7 @@
       flex: 0 0 auto;
       min-width: 0;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
       gap: 16px;
       padding: 12px 16px;
@@ -130,6 +150,7 @@
       font-size: 11px;
       font-weight: 400;
       line-height: 1.6;
+      white-space: normal;
       overflow-wrap: anywhere;
       word-break: normal;
     }
@@ -239,7 +260,6 @@
       }
     }
 
-    /* スマートフォン・狭い埋め込み枠 */
     @media (max-width: 600px) {
       #overlay { padding: 0; }
 
@@ -285,7 +305,6 @@
       #status { top: 10px; font-size: 10px; }
     }
 
-    /* 横向きスマホなど、高さが低い画面 */
     @media (max-height: 500px) {
       #overlay { padding: 0; }
 
@@ -310,9 +329,10 @@
 </head>
 <body>
   <button class="launch" id="open" type="button"
-          aria-haspopup="dialog" aria-controls="overlay">
-    <span class="pin" aria-hidden="true">🌎</span>
-    <span>Check on a globe</span>
+          aria-haspopup="dialog" aria-controls="overlay"
+          aria-label="TracX Logis JP Tokyoの住所を表示し、3D地球儀を開く">
+    <span class="pin" aria-hidden="true">＞＞</span>
+    <span class="address-text">〒273-0017<br>千葉県船橋市西浦3丁目4-2<br>W05バース TracX Logis JP フルフィルメント入荷検品係<br>[English]<br>〒273-0017<br>W05 Berth, TracX Logis JP SmartFulfillment Inspection section,<br>MFLP Funabashi Nishiura, 3-4-2 Nishiura, Funabashi-shi, Chiba, Japan</span>
   </button>
 
   <div id="overlay" role="dialog" aria-modal="true" aria-label="TracX Logis 3D地球儀">
@@ -320,10 +340,8 @@
       <header id="toolbar">
         <div>
           <strong>TracX Logis JP Tokyo-FulfillmentCenter</strong>
-          <small>
-            〒273-0017 千葉県船橋市西浦3丁目4-2 W05バース TracX Logis JP フルフィルメント入荷検品係<br>
-            [English] 〒273-0017 W05 Berth, TracX Logis JP SmartFulfillment Inspection section, MFLP Funabashi Nishiura, 3-4-2 Nishiura, Funabashi-shi, Chiba, Japan
-          </small>
+          <small>〒273-0017 千葉県船橋市西浦3丁目4-2 W05バース TracX Logis JP フルフィルメント入荷検品係<br>
+          [English] 〒273-0017 W05 Berth, TracX Logis JP SmartFulfillment Inspection section, MFLP Funabashi Nishiura, 3-4-2 Nishiura, Funabashi-shi, Chiba, Japan</small>
         </div>
         <button id="close" type="button" aria-label="地球儀を閉じる">✕ 閉じる</button>
       </header>
@@ -340,7 +358,6 @@
     </section>
   </div>
 
-  <!-- Globe.gl includes its required rendering dependencies in the browser bundle. -->
   <script src="https://cdn.jsdelivr.net/npm/globe.gl@2.46.2/dist/globe.gl.min.js"></script>
   <script>
     (() => {
@@ -352,7 +369,6 @@
 
       let world = null;
       let initialized = false;
-      let resizeObserver = null;
       let previousFocus = null;
 
       const tokyoCenter = {
@@ -371,9 +387,9 @@
 
       function resizeGlobe() {
         if (world && overlay.classList.contains('open')) {
-          const width = Math.max(1, globeContainer.clientWidth);
-          const height = Math.max(1, globeContainer.clientHeight);
-          world.width(width).height(height);
+          world
+            .width(Math.max(1, globeContainer.clientWidth))
+            .height(Math.max(1, globeContainer.clientHeight));
         }
       }
 
@@ -388,13 +404,10 @@
           return;
         }
 
-        const width = Math.max(1, globeContainer.clientWidth);
-        const height = Math.max(1, globeContainer.clientHeight);
-
         try {
           world = window.Globe()(globeContainer)
-            .width(width)
-            .height(height)
+            .width(Math.max(1, globeContainer.clientWidth))
+            .height(Math.max(1, globeContainer.clientHeight))
             .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
             .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
             .backgroundColor('rgba(0,0,0,0)')
@@ -442,8 +455,8 @@
           initialized = true;
 
           if ('ResizeObserver' in window) {
-            resizeObserver = new ResizeObserver(resizeGlobe);
-            resizeObserver.observe(globeContainer);
+            const observer = new ResizeObserver(resizeGlobe);
+            observer.observe(globeContainer);
           } else {
             window.addEventListener('resize', resizeGlobe);
           }
@@ -476,5 +489,8 @@
       });
     })();
   </script>
+</body>
+</html>
+
 </body>
 </html>
