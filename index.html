@@ -36,7 +36,7 @@ button {
 .launch {
   display: inline-flex;
   align-items: center;
-  justify-content: flex-start; /* 左寄せ */
+  justify-content: flex-start;
   gap: 10px;
   padding: 12px 18px;
   border: 1px solid transparent;
@@ -46,9 +46,12 @@ button {
   font-family: "Times New Roman", serif;
   font-size: 12px;
   font-weight: 600;
-  text-align: left; /* 文字を左寄せ */
+  text-align: left;
   cursor: pointer;
   transition: background .2s ease, box-shadow .2s ease;
+
+  /* ボタン全体を左へ移動 */
+  transform: translateX(-80px);
 }
 .launch:hover,
 .launch:focus-visible {
