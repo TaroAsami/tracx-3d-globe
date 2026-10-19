@@ -17,50 +17,55 @@
     * { box-sizing: border-box; }
 
     html, body {
-  margin: 0;
-  min-height: 100%;
-  font-family: Arial, "Noto Sans JP", sans-serif;
-  background: transparent;
-}
+      margin: 0;
+      min-height: 100%;
+      font-family: Arial, "Noto Sans JP", sans-serif;
+      background: transparent;
+    }
 
-body {
-  color: var(--text);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-button {
-  font: inherit;
-}
+    body {
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
 
-.launch {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 10px;
-  padding: 12px 18px;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  background: transparent;
-  color: #ffffff;
-  font-family: "Times New Roman", serif;
-  font-size: 12px;
-  font-weight: 600;
-  text-align: left;
-  cursor: pointer;
-  transition: background .2s ease, box-shadow .2s ease;
+    button { font: inherit; }
 
-  /* ボタン全体を左へ移動 */
-  transform: translateX(-80px);
-}
-.launch:hover,
-.launch:focus-visible {
-  background: rgba(53, 217, 255, .09);
-  box-shadow: 0 0 18px rgba(53, 217, 255, .12);
-  outline: none;
-}
+    /* 起動ボタン：住所全文を置かず、狭い埋め込み枠でも見切れにくくする */
+    .launch {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      max-width: 100%;
+      padding: 12px 18px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      color: #ffffff;
+      font-family: "Times New Roman", serif;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      overflow-wrap: anywhere;
+      transition: background .2s ease, box-shadow .2s ease;
+    }
 
-    .launch .pin { font-size: 19px; line-height: 1; }
+    .launch:hover,
+    .launch:focus-visible {
+      background: rgba(53, 217, 255, .09);
+      box-shadow: 0 0 18px rgba(53, 217, 255, .12);
+      outline: none;
+    }
+
+    .launch .pin {
+      font-size: 19px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
 
     #overlay {
       display: none;
@@ -82,6 +87,9 @@ button {
       flex-direction: column;
       width: min(1180px, 100%);
       height: min(820px, 94vh);
+      height: min(820px, 94dvh);
+      min-width: 0;
+      min-height: 0;
       overflow: hidden;
       border: 1px solid rgba(53, 217, 255, .28);
       border-radius: 15px;
@@ -90,7 +98,8 @@ button {
     }
 
     #toolbar {
-      min-height: 60px;
+      flex: 0 0 auto;
+      min-width: 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -101,10 +110,17 @@ button {
       border-bottom: 1px solid rgba(53, 217, 255, .2);
     }
 
+    #toolbar > div {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
     #toolbar strong {
       display: block;
       font-size: 14px;
       letter-spacing: .1px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
     }
 
     #toolbar small {
@@ -113,6 +129,9 @@ button {
       color: #a9c7e4;
       font-size: 11px;
       font-weight: 400;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+      word-break: normal;
     }
 
     #close {
@@ -123,6 +142,7 @@ button {
       color: #eaf8ff;
       background: rgba(255, 255, 255, .045);
       cursor: pointer;
+      white-space: nowrap;
       transition: background .2s ease, border-color .2s ease;
     }
 
@@ -135,7 +155,8 @@ button {
 
     #globe {
       position: relative;
-      flex: 1;
+      flex: 1 1 auto;
+      min-width: 0;
       min-height: 0;
       width: 100%;
       overflow: hidden;
@@ -144,6 +165,7 @@ button {
 
     #globe canvas {
       display: block;
+      max-width: 100%;
       outline: none;
     }
 
@@ -152,6 +174,7 @@ button {
       left: 16px;
       bottom: 16px;
       z-index: 2;
+      width: max-content;
       max-width: min(360px, calc(100% - 32px));
       padding: 12px 14px;
       border: 1px solid rgba(53, 217, 255, .24);
@@ -161,6 +184,7 @@ button {
       box-shadow: 0 8px 28px rgba(0, 0, 0, .2);
       backdrop-filter: blur(9px);
       pointer-events: none;
+      overflow-wrap: anywhere;
     }
 
     #info strong {
@@ -183,13 +207,15 @@ button {
       left: 50%;
       z-index: 3;
       transform: translateX(-50%);
+      max-width: calc(100% - 28px);
       color: #d8f6ff;
       background: rgba(5, 17, 34, .74);
       border: 1px solid rgba(53, 217, 255, .22);
       border-radius: 20px;
       padding: 7px 12px;
       font-size: 11px;
-      white-space: nowrap;
+      text-align: center;
+      white-space: normal;
       pointer-events: none;
     }
 
@@ -198,6 +224,7 @@ button {
       right: 16px;
       bottom: 18px;
       z-index: 2;
+      max-width: calc(100% - 32px);
       color: #9fc9e8;
       font-size: 11px;
       text-align: right;
@@ -206,27 +233,86 @@ button {
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
     }
 
+    /* スマートフォン・狭い埋め込み枠 */
     @media (max-width: 600px) {
       #overlay { padding: 0; }
-      #panel { width: 100%; height: 100%; height: 100dvh; border-radius: 0; }
-      #toolbar { padding: 10px 12px; gap: 10px; }
-      #toolbar strong { font-size: 12px; }
-      #toolbar small { font-size: 10px; }
-      #close { padding: 8px 10px; font-size: 12px; }
-      #info { left: 10px; bottom: 10px; max-width: calc(100% - 20px); padding: 10px 12px; }
+
+      #panel {
+        width: 100%;
+        height: 100vh;
+        height: 100dvh;
+        border-radius: 0;
+      }
+
+      #toolbar {
+        align-items: flex-start;
+        gap: 8px;
+        padding: 12px;
+      }
+
+      #toolbar strong {
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      #toolbar small {
+        font-size: 10px;
+        line-height: 1.6;
+      }
+
+      #close {
+        padding: 7px 9px;
+        font-size: 11px;
+      }
+
+      #info {
+        left: 10px;
+        bottom: 10px;
+        width: auto;
+        max-width: calc(100% - 20px);
+        padding: 10px 12px;
+      }
+
       #info strong { font-size: 11px; }
       #info span { font-size: 10px; }
       #hint { display: none; }
       #status { top: 10px; font-size: 10px; }
     }
+
+    /* 横向きスマホなど、高さが低い画面 */
+    @media (max-height: 500px) {
+      #overlay { padding: 0; }
+
+      #panel {
+        width: 100%;
+        height: 100vh;
+        height: 100dvh;
+        border-radius: 0;
+      }
+
+      #toolbar { padding: 6px 10px; gap: 8px; }
+      #toolbar strong { font-size: 11px; }
+      #toolbar small { margin-top: 2px; font-size: 9px; line-height: 1.4; }
+      #close { padding: 6px 8px; font-size: 11px; }
+      #info { left: 8px; bottom: 8px; padding: 7px 9px; }
+      #info strong { margin-bottom: 3px; }
+      #info span { line-height: 1.4; }
+      #status { top: 6px; padding: 5px 9px; }
+      #hint { display: none; }
+    }
   </style>
 </head>
 <body>
-  <button class="launch" id="open" type="button" aria-haspopup="dialog" aria-controls="overlay">
-    <span class="pin" aria-hidden="true">＞＞</span><span>〒273-0017<br>千葉県船橋市西浦3丁目4-2<br>W05バース TracX Logis JP フルフィルメント入荷検品係<br>[English]<br>〒273-0017<br>W05 Berth, TracX Logis JP SmartFulfillment Inspection section,<br>MFLP Funabashi Nishiura, 3-4-2 Nishiura, Funabashi-shi, Chiba , Japan</span>
+  <button class="launch" id="open" type="button"
+          aria-haspopup="dialog" aria-controls="overlay">
+    <span class="pin" aria-hidden="true">🌎</span>
+    <span>Check on a globe</span>
   </button>
 
   <div id="overlay" role="dialog" aria-modal="true" aria-label="TracX Logis 3D地球儀">
@@ -234,7 +320,10 @@ button {
       <header id="toolbar">
         <div>
           <strong>TracX Logis JP Tokyo-FulfillmentCenter</strong>
-          <small><span>〒273-0017 千葉県船橋市西浦3丁目4-2 W05バース TracX Logis JP フルフィルメント入荷検品係<br>[English] 〒273-0017 W05 Berth, TracX Logis JP SmartFulfillment Inspection section, MFLP Funabashi Nishiura, 3-4-2 Nishiura, Funabashi-shi, Chiba , Japan</small>
+          <small>
+            〒273-0017 千葉県船橋市西浦3丁目4-2 W05バース TracX Logis JP フルフィルメント入荷検品係<br>
+            [English] 〒273-0017 W05 Berth, TracX Logis JP SmartFulfillment Inspection section, MFLP Funabashi Nishiura, 3-4-2 Nishiura, Funabashi-shi, Chiba, Japan
+          </small>
         </div>
         <button id="close" type="button" aria-label="地球儀を閉じる">✕ 閉じる</button>
       </header>
@@ -260,6 +349,7 @@ button {
       const closeButton = document.getElementById('close');
       const globeContainer = document.getElementById('globe');
       const status = document.getElementById('status');
+
       let world = null;
       let initialized = false;
       let resizeObserver = null;
@@ -274,12 +364,16 @@ button {
       function closeGlobe() {
         overlay.classList.remove('open');
         document.body.style.overflow = '';
-        if (previousFocus && typeof previousFocus.focus === 'function') previousFocus.focus();
+        if (previousFocus && typeof previousFocus.focus === 'function') {
+          previousFocus.focus();
+        }
       }
 
       function resizeGlobe() {
         if (world && overlay.classList.contains('open')) {
-          world.width(globeContainer.clientWidth).height(globeContainer.clientHeight);
+          const width = Math.max(1, globeContainer.clientWidth);
+          const height = Math.max(1, globeContainer.clientHeight);
+          world.width(width).height(height);
         }
       }
 
@@ -294,8 +388,13 @@ button {
           return;
         }
 
+        const width = Math.max(1, globeContainer.clientWidth);
+        const height = Math.max(1, globeContainer.clientHeight);
+
         try {
           world = window.Globe()(globeContainer)
+            .width(width)
+            .height(height)
             .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
             .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
             .backgroundColor('rgba(0,0,0,0)')
@@ -303,22 +402,21 @@ button {
             .atmosphereColor('#4aa8ff')
             .atmosphereAltitude(0.16)
             .pointsData([tokyoCenter])
-.pointLat('lat')
-.pointLng('lng')
-.pointAltitude(() => 0.008)
-.pointRadius(() => 0.16)
-.pointColor(() => '#35d9ff')
-.pointResolution(24)
-.pointLabel('name')
-
-.ringsData([tokyoCenter])
-.ringLat('lat')
-.ringLng('lng')
-.ringAltitude(() => 0.006)
-.ringColor(() => '#35d9ff')
-.ringMaxRadius(3.5)
-.ringPropagationSpeed(1.5)
-.ringRepeatPeriod(1400)
+            .pointLat('lat')
+            .pointLng('lng')
+            .pointAltitude(() => 0.008)
+            .pointRadius(() => 0.16)
+            .pointColor(() => '#35d9ff')
+            .pointResolution(24)
+            .pointLabel('name')
+            .ringsData([tokyoCenter])
+            .ringLat('lat')
+            .ringLng('lng')
+            .ringAltitude(() => 0.006)
+            .ringColor(() => '#35d9ff')
+            .ringMaxRadius(3.5)
+            .ringPropagationSpeed(1.5)
+            .ringRepeatPeriod(1400)
             .labelsData([tokyoCenter])
             .labelLat('lat')
             .labelLng('lng')
@@ -327,8 +425,6 @@ button {
             .labelDotRadius(0.12)
             .labelColor(() => '#dffaff')
             .labelResolution(3);
-
-          world.width(globeContainer.clientWidth).height(globeContainer.clientHeight);
 
           const controls = world.controls();
           controls.autoRotate = true;
@@ -352,6 +448,7 @@ button {
             window.addEventListener('resize', resizeGlobe);
           }
 
+          requestAnimationFrame(resizeGlobe);
         } catch (error) {
           console.error('Globe initialization failed:', error);
           status.textContent = '地球儀の初期化に失敗しました。時間をおいて再度お試しください。';
@@ -373,7 +470,9 @@ button {
       });
 
       document.addEventListener('keydown', event => {
-        if (event.key === 'Escape' && overlay.classList.contains('open')) closeGlobe();
+        if (event.key === 'Escape' && overlay.classList.contains('open')) {
+          closeGlobe();
+        }
       });
     })();
   </script>
